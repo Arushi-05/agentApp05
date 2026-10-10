@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 const rootModules = fileURLToPath(new URL('./node_modules', import.meta.url));
 
 export default defineConfig({
-  esbuild: { jsx: 'automatic' },
+  oxc: { jsx: { runtime: 'automatic' } },
   resolve: {
     alias: [
       // client/ has its own node_modules; force one React copy so hooks work under test.
