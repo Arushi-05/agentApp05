@@ -1,7 +1,7 @@
 import express from 'express';
 import { pathToFileURL } from 'node:url';
 import type { BookStatus } from '../../shared/types.js';
-import { addBook } from './store.js';
+import { addBook, updateStatus } from './store.js';
 import { readRouter } from './routes/read.js';
 import { mountStatic } from './static.js';
 
@@ -35,6 +35,22 @@ app.post('/api/books', (req, res) => {
     status,
   });
   res.status(201).json(book);
+});
+
+app.patch('/api/books/:id', (req, res) => {
+  const { status } = req.body ?? {};
+
+  if (!isBookStatus(status)) {
+    res.status(400).json({ error: 'status must be one of: to-read, reading, done' });
+    return;
+  }
+
+  const book = updateStatus(req.params.id, status);
+  if (!book) {
+    res.status(404).json({ error: 'book not found' });
+    return;
+  }
+  res.status(200).json(book);
 });
 
 // Must stay after every API router: static files + SPA fallback for non-/api GETs.
