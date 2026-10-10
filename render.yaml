@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: reading-list
+    runtime: node
+    plan: free
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/books/stats
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
