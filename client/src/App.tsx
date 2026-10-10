@@ -18,10 +18,12 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
     ...init,
     headers: { 'Content-Type': 'application/json', ...init?.headers },
   });
-  const body = await res.json().catch(() => null);
+  const body: unknown = await res.json().catch(() => null);
   if (!res.ok) {
     const message =
-      body && typeof body.error === 'string' ? body.error : `Request failed (${res.status})`;
+      typeof body === 'object' && body !== null && 'error' in body && typeof body.error === 'string'
+        ? body.error
+        : `Request failed (${res.status})`;
     throw new Error(message);
   }
   return body as T;
@@ -62,7 +64,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    refresh(filter);
+    void refresh(filter);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
 
@@ -126,7 +128,7 @@ export default function App() {
 
       <section className="card">
         <h2>Add a book</h2>
-        <form className="add-form" onSubmit={handleAdd}>
+        <form className="add-form" onSubmit={(e) => void handleAdd(e)}>
           <label>
             Title
             <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Required" />
@@ -180,7 +182,7 @@ export default function App() {
                 <select
                   className={`status-select status-${book.status}`}
                   value={book.status}
-                  onChange={(e) => handleStatusChange(book, e.target.value as BookStatus)}
+                  onChange={(e) => void handleStatusChange(book, e.target.value as BookStatus)}
                   aria-label={`Status of ${book.title}`}
                 >
                   {STATUSES.map((s) => (
