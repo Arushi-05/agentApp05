@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "strict": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "emitDeclarationOnly": true,
+    "outDir": "dist"
+  },
+  "include": ["types.ts"]
+}
